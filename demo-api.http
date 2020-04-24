@@ -1,0 +1,49 @@
+POST http://localhost:8080/children
+Content-Type: application/json
+
+{
+  "name": "child{{$randomInt}}"
+}
+
+> {%
+    client.global.set("child", response.headers.valueOf("Location"));
+%}
+
+###
+
+GET {{child}}
+Accept: application/json
+
+###
+
+GET http://localhost:8080/children
+Accept: application/json
+
+###
+
+POST http://localhost:8080/parents
+Content-Type: application/json
+
+{
+  "name": "parent{{$randomInt}}",
+  "children": [
+    "{{child}}"
+  ]
+}
+
+> {%
+    client.global.set("parent", response.headers.valueOf("Location"));
+%}
+
+###
+
+GET {{parent}}
+Accept: application/json
+
+###
+
+GET http://localhost:8080/parents/
+Accept: application/json
+
+###
+
